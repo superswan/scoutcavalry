@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% block head %}
+    <meta charset="utf-8">
+    <title>Scout Cavalry 0.0.1 - {% block title %}{% endblock %}</title>
+    <meta name="description" content="Recon Unit">
+    <meta name="author" content="twitter.com/__kallisti__">
+    <meta name="viewport" content="width=devide-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/uikit.min.css') }}">
+    <script src="{{ url_for('static', filename='js/uikit.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/uikit-icons.min.js') }}"></script>
+
+   {% endblock %}
+  </head>
+
+   <body>
+     <div class="uk-container">
+     {% block body %}
+      <header>
+        <div class="uk-background-cover" style="background-image: url({{
+          url_for('static', filename='img/header.jpg') }});">
+      <h1> scout cavalry 0.0.1-ALPHA </h1>
+      </div>
+      </header>
+      <div class="uk-panel">
+     <ul class="uk-navbar-nav">
+       <li class="{{'uk-active' if active_page == 'hosts' else '' }}"><a href="/">Hosts</a></li>
+       <li class="uk-disabled"><a href="#">Scan</a></li>
+       <li class="{{ 'uk-active' if active_page == 'import' else '' }}"><a
+           href="/import">Import</a></li>
+       <li class="{{ 'uk-active' if active_page == 'manage_db' else '' }}"><a
+           href="/database">Database</a></li>
+       <li class="uk-disabled"><a href="#">Configuration</a></li>
+     </ul>
+     {% endblock %}
+      </div>
+    {% block footer %}
+    <footer>
+      <a href = "http://CHAOSCULT.ORG">CCCP☭</a>
+    </footer>
+    {% endblock %}
+   </body>
+</html>

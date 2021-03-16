@@ -1,0 +1,27 @@
+<!-- Main View Template -->
+{% extends "base.html" %}
+{% block title %}DATABASE{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block body %}
+  {{ super() }}
+  <div class="container">    
+  <div class="uk-panel">
+    <form class="uk-form" action="#">    
+    <label for="select_db">Select DB:</label>
+       <select id="select_db">
+         <option value="scans.db">scans.db (default)</option>
+      </select>
+      <input type="submit">
+        </form>
+     </div>
+     <hr class="uk-divider-small">
+     <button class="uk-button">Create</button>
+     <button class="uk-button">Save</button>
+      <button class="uk-button">Import</button>
+  </div> 
+
+{% block footer %}
+{% endblock %}
+{% endblock %}

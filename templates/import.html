@@ -1,0 +1,21 @@
+<!-- Main View Template -->
+{% extends "base.html" %}
+{% block title %}IMPORT{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block body %}
+  {{ super() }}
+     <div class="uk-panel">
+      <h5> Import masscan data from XML doc</h5>
+      <hr class="uk-divider-small">
+       <form action="/upload-import" method = "POST" enctype =
+                     "multipart/form-data">
+         <input type="file" name="filename">
+         <input type="submit">
+       </form>
+
+     </div>
+{% block footer %}
+{% endblock %}
+{% endblock %}
