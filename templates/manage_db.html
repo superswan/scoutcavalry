@@ -1,4 +1,4 @@
-<!-- Main View Template -->
+<!-- Database Template -->
 {% extends "base.html" %}
 {% block title %}DATABASE{% endblock %}
 {% block head %}
@@ -11,16 +11,63 @@
     <form class="uk-form" action="#">    
     <label for="select_db">Select DB:</label>
        <select id="select_db">
-         <option value="scans.db">scans.db (default)</option>
+         {% for db in database_files %}
+         {% if 'scans.db' in db -%}
+         <option selected="selected" value="{{ db }}">{{ db }} (default)</option>
+         {%- else -%}
+         <option value="{{ db }}">{{ db }}</option>
+         {%- endif %}
+         {% endfor %}
       </select>
       <input type="submit">
-        </form>
-     </div>
+    </form>
+  </div>
      <hr class="uk-divider-small">
-     <button class="uk-button">Create</button>
-     <button class="uk-button">Save</button>
-      <button class="uk-button">Import</button>
+     <button class="uk-button" id="create_button">Create</button>
+     <button class="uk-button" id="save_button">Save</button>
+     <button class="uk-button" id="import_button">Import</button>
   </div> 
+
+  <script>
+    // Get the selected db file
+    var select_db = document.getElementById("select_db");
+    var value = select_db.options[select_db.selectedIndex].value;
+    var text = select_db.options[select_db.selectedIndex].text;
+
+    // Get buttons
+    var create_button = document.getElementById("create_button");
+    var save_button = document.getElementById("save_button");
+    var import_button = document.getElementById("import_button");
+
+    // Create new db
+    create_button.onclick=(function () {
+      console.log("creating DB");
+      var new_db = prompt("Enter database name:");
+
+      // AJAX request to create new db
+      var req = new XMLHttpRequest();
+      var create_url = "/create_db";
+      var params = 'filename='.concat(new_db);
+      req.open('POST', create_url, true);
+
+      // Set header info
+      req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+      req.onreadystatechange = function() {
+        if(req.readyState == 4 && req.status == 200) {
+          console.log(req.responseText);
+        }
+      }
+      req.send(params);
+      location.reload()
+    });
+
+    // Download .db file
+    save_button.onclick=(function () {
+      var db_url = "/save_db/".concat(value)
+      open(db_url)
+    });
+  </script>
 
 {% block footer %}
 {% endblock %}

@@ -9,6 +9,9 @@ __pycache__/
 # XML files
 *.xml
 
+# Database files
+*.db
+
 # Distribution / packaging
 .Python
 build/

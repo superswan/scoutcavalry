@@ -1,10 +1,15 @@
-from flask import Flask
-from flask import flash, render_template, request, redirect, send_from_directory, url_for
-import sqlite3 as sql
-import platform # Windows is not supported
+import glob
+import os
+import platform  # Windows is not supported
 
+from flask import (Flask, flash, redirect, render_template, request,
+                   send_from_directory, url_for)
 from werkzeug.utils import secure_filename
+
+# sqlite must be imorted after flask imports or it will generate an error, imports are handled by manage_db.py 
+
 #local imports
+import manage_db
 import masscan_import
 
 # banner cause had to
@@ -33,7 +38,15 @@ IMPORT_DIR ='data/import/'
 ALLOWED_EXT_IMPORT = {'xml'}
 
 app = Flask(__name__)
+
+# Directory configuration
+app.config['DB_DIR'] = DB_DIR
+app.config['IMAGE_DIR'] = IMAGE_DIR
 app.config['IMPORT_DIR'] = IMPORT_DIR
+
+# Database selection
+app.config['SELECTED_DB'] = 'scans.db'
+
 
 def import_check_file_type(filename):
     return '.' in filename and \
@@ -43,31 +56,8 @@ def import_check_file_type(filename):
 def view_main():
     active_page = 'hosts'
 
-    conn = sql.connect("data/db/scans.db")
-    conn.row_factory = sql.Row
+    rows = manage_db.load_database(app.config['DB_DIR'], app.config['SELECTED_DB'])
 
-    c = conn.cursor()
-    # create the table if doesn't exist
-    print("creating table")
-    c.execute('''CREATE TABLE IF NOT EXISTS hosts(
-                 host_id INTEGER PRIMARY KEY,
-                 hostname TEXT,
-                 ip TEXT,
-                 port INTEGER,
-                 service TEXT,
-                 continent TEXT,
-                 country TEXT,
-                 city TEXT,
-                 lat TEXT,
-                 long TEXT,
-                 img_file TEXT,
-                 UNIQUE(ip, port))''')
-    conn.commit()
-
-
-    c.execute("SELECT * FROM hosts")
-
-    rows = c.fetchall();
     return render_template("main.html", active_page = active_page, rows = rows)
 
 @app.route("/screen/<filename>")
@@ -75,6 +65,11 @@ def display_screenshot(filename):
     if filename != "unavailable":
         return send_from_directory(IMAGE_DIR, filename)
 
+# RUN SCAN
+@app.route("/scan")
+def run_scan():
+    active_page = 'scan'
+    return render_template("scan.html", active_page=active_page)
 
 # SCAN IMPORTING
 @app.route("/import")
@@ -93,26 +88,42 @@ def upload_file():
 
 # DATABASE MANAGEMENT
 @app.route("/database")
-def manage_db():
+def config_db():
+    active_page= 'manage_db'
+
+    root_dir = os.getcwd() 
+    # Get a list of available .db files in order to populate <select> element
+    database_files = []
+    os.chdir(DB_DIR)
+    for db in glob.glob("*.db"):
+        database_files.append(db)
+    os.chdir(root_dir)
+
+    return render_template("manage_db.html",database_files = database_files, active_page=active_page)
+
+@app.route("/load_db", methods=['POST'])
+def load_db(): 
     active_page= 'manage_db'
     return render_template("manage_db.html",active_page=active_page)
 
-@app.route("/load_db")
-def load_db():
-    active_page= 'manage_db'
-    return render_template("manage_db.html",active_page=active_page)
-
-@app.route("/create_db")
+@app.route("/create_db", methods=['POST'])
 def create_db():
-    active_page= 'manage_db'
-    return render_template("manage_db.html",active_page=active_page)
+    if request.method == 'POST':
+        filename = request.form.get('filename', type=str)
+        if not filename.endswith(".db"):
+            filename = filename+".db"
+    
+        print("Creating database with filename:",filename)
+        manage_db.create_db(app.config['DB_DIR'], filename)
+        
+    return  "Done."
 
-@app.route("/save_db")
-def save_db():
-    active_page= 'manage_db'
-    return render_template("manage_db.html",active_page=active_page)
+@app.route("/save_db/<path:filename>") 
+def save_db(filename):
+    print("Downloading Database: " + filename)
+    return send_from_directory(app.config['DB_DIR'], filename, mimetype='application/x-sqlite3')
 
-@app.route("/import_db")
+@app.route("/import_db", methods=['GET', 'POST'])
 def import_db():
     active_page= 'manage_db'
     return render_template("manage_db.html",active_page=active_page)

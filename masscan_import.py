@@ -32,7 +32,7 @@ def create_connection(db_file):
     except Exception as e:
         print(e)
     
-    c = conn.cursor()
+    #c = conn.cursor()
    
     return conn
 
@@ -105,7 +105,7 @@ def xmlImport(filename, db_name):
             print(f"{bcolors.WARNING}[*] Unable to capture screenshot{bcolors.ENDC}")
         
 
-                    # get geolocation data
+        # get geolocation data
         continent,country,city,latitude,longitude = geolocation.getGeoLoc(ip_addr)
         print(f"{bcolors.OKBLUE}[+] submitting:\t{hostname}({ip_addr}:{port_id}, {service_id}) to database{bcolors.ENDC}")
         host_data = (hostname,ip_addr,int(port_id),service_id,continent,country,city,latitude,longitude,img_file)
