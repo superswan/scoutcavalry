@@ -15,6 +15,7 @@ masscan web interface / recon tool
     * import
     * delete
 * Enable scanning within interface
+    * Specify interface
     * Target List
     * IP exclusions
     * Configuration from file
@@ -27,3 +28,5 @@ masscan web interface / recon tool
 * VNC screenshots
 * Create appropriate responses after execution of operation (run scan, create database, etc.)
 * Support additional masscan output options (binary, grepable, JSON, simple list)
+* Host details page
+
