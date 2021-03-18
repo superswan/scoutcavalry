@@ -12,6 +12,9 @@ __pycache__/
 # Database files
 *.db
 
+# files in data/images directory
+data/images/*png
+
 # Distribution / packaging
 .Python
 build/

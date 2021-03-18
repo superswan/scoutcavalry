@@ -18,6 +18,7 @@ chrome_options.add_argument("--ignore-certificate-errors")
 # the way selenium handles sessions
 
 def getWebScreen(url):
+    #url_retry = None
     url_parsed = urlparse(url)
     net_loc = url_parsed.netloc
     filename = None
@@ -29,6 +30,7 @@ def getWebScreen(url):
             port_num = str(url_parsed.netloc.split(":")[1])
             ip_stripped = net_loc.replace('.','-')
             filename = f"{ip_stripped}_{port_num}_scrot.png"
+            print(f"{bcolors.WARNING}[!] Using IP instead of hostname{bcolors.ENDC}")
     
     except:
         print(f"{bcolors.WARNING}[!] Using hostname instead of IP{bcolors.ENDC}")
@@ -43,10 +45,10 @@ def getWebScreen(url):
     try:
         driver.get(url)
         print(f"{bcolors.OKGREEN}[*] Saving screenshot as: {filename}{bcolors.ENDC}")
-        screenshot = driver.save_screenshot(filename)
-    except:
+        driver.save_screenshot(filename)
+    except Exception as e:
         print(f"{bcolors.WARNING}[!] Screenshot Unavailable{bcolors.ENDC}")
-        pass
+        print(f"{bcolors.FAIL}[!] {e}{bcolors.ENDC}")
 
     driver.quit()
     return filename
