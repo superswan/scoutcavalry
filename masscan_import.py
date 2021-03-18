@@ -20,8 +20,8 @@ import webscreen
 current_abs_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.abspath(os.getcwd()))
 data_dir = os.path.join(current_abs_path, "data")
 db_dir = os.path.join(data_dir, "db")
-import_dir = os.path.join(current_abs_path, "import")
-image_dir = os.path.join(current_abs_path, "images")
+import_dir = os.path.join(data_dir, "import")
+image_dir = os.path.join(data_dir, "images")
 
 # create connection to db
 
@@ -96,17 +96,21 @@ def xmlImport(filename, db_name):
             
             try:
                img_file = webscreen.getWebScreen(url)
-               # move image file to data/images directory 
+               dest = f'{image_dir}/{img_file}'
+               shutil.move(img_file, dest)
+            
             except:
                pass
         
         elif img_file is None:       
             img_file = "unavailable"
             print(f"{bcolors.WARNING}[*] Unable to capture screenshot{bcolors.ENDC}")
-        
+
 
         # get geolocation data
         continent,country,city,latitude,longitude = geolocation.getGeoLoc(ip_addr)
+
+        # submit to db
         print(f"{bcolors.OKBLUE}[+] submitting:\t{hostname}({ip_addr}:{port_id}, {service_id}) to database{bcolors.ENDC}")
         host_data = (hostname,ip_addr,int(port_id),service_id,continent,country,city,latitude,longitude,img_file)
         with conn:

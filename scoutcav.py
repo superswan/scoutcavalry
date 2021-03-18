@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 #local imports
 import manage_db
 import masscan_import
+import scanner
 
 # banner cause had to
 banner = """
@@ -28,7 +29,7 @@ banner = """
 
 
 """
-
+# CONFIGURATION
 
 # Define data/ directories for db, images, and imported xml
 DB_DIR ='data/db/'
@@ -47,11 +48,13 @@ app.config['IMPORT_DIR'] = IMPORT_DIR
 # Database selection
 app.config['SELECTED_DB'] = 'scans.db'
 
-
 def import_check_file_type(filename):
     return '.' in filename and \
             filename.rsplit('.', 1)[1].lower() in ALLOWED_EXT_IMPORT
 
+# ROUTES
+
+# Main view, displays hosts in a table
 @app.route("/")
 def view_main():
     active_page = 'hosts'
@@ -60,16 +63,39 @@ def view_main():
 
     return render_template("main.html", active_page = active_page, rows = rows)
 
+# serve file from image directory
 @app.route("/screen/<filename>")
 def display_screenshot(filename):
-    if filename != "unavailable":
-        return send_from_directory(IMAGE_DIR, filename)
+    return send_from_directory(IMAGE_DIR, filename)
 
 # RUN SCAN
 @app.route("/scan")
-def run_scan():
+def view_scan():
     active_page = 'scan'
     return render_template("scan.html", active_page=active_page)
+
+@app.route("/run-scan", methods=['GET', 'POST'])
+def run_scan():
+    active_page = 'scan'
+    if request.method == 'POST':
+        filename = request.form.get('scan_filename', type=str)
+        ip_addr = request.form.get('ip_addr')
+        ports = request.form.get('ports').replace(" ", "")
+        packet_rate = request.form.get('packet_rate')
+
+    if filename.endswith(".xml"):
+        filename = filename
+    else:
+        filename = filename+".xml"
+
+    print("Starting scanner for IP/range: "+ip_addr)
+    print("Scanning ports: "+ports)
+    print("Saving as: "+filename)
+    print("Packet Rate: "+packet_rate)
+    
+    scanner.run(filename, ip_addr, ports, packet_rate)
+    return render_template("scan.html", active_page=active_page)
+
 
 # SCAN IMPORTING
 @app.route("/import")

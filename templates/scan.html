@@ -1,1 +1,59 @@
 <!-- Scan Template -->
+{% extends "base.html" %}
+{% block title %}IMPORT{% endblock %}
+{% block head %}
+  {{ super() }}
+{% endblock %}
+{% block body %}
+  {{ super() }}
+     <div class="uk-panel">
+      <h5>Run Scan</h5>
+      refer to <a href="http://manpages.org/masscan/8" target="_blank">masscan (8)</a> for configuration options
+      <hr class="uk-divider-small">
+       <form action="/scan" method = "POST" enctype =
+                     "multipart/form-data">
+         <label for="scan_filename">Name:</label>
+         <input type="text" name="scan_filename">
+         <br>
+         <br>
+         <label for="ip_addr">IP (Single address or use CIDR for range):</label>
+         <input type="text" name="ip_addr">
+         <h5>Services</h5>
+         <label for="service_http">HTTP</label>
+         <input class="uk-checkbox" type="checkbox" name="service_http">
+         <label for="service_https">HTTPS</label>
+         <input class="uk-checkbox" type="checkbox" name="service_https">
+         <label for="service_ftp">FTP</label>
+         <input class="uk-checkbox" type="checkbox" name="service_ftp">
+         <label for="service_ssh">SSH</label>
+         <input class="uk-checkbox" type="checkbox" name="service_ssh">
+         
+         <br>
+         <label for="ports">Specify Ports (Use comma to separate values):</label>
+         <input type="text" name="ports">
+         <br>
+         <br>
+         <label for="packet_rate">Rate (packets per second (pps)):</label>
+         <input type="text" name="packet_rate">
+         <br>
+         <br>
+      <h5>Options</h5>
+      <hr class="uk-divider-small">
+         <label for="source_ip_addr">Source IP:</label>
+         <input type="text" name="source_ip_addr">
+         <br>
+         <br>
+         <label for="banners">Grab banners</label>
+         <input class="uk-checkbox" type="checkbox" name="banners">
+         <label for="ping">Enable ping</label>
+         <input class="uk-checkbox" type="checkbox" name="ping">
+         <label for="open_ports">Only report open ports</label>
+         <input class="uk-checkbox" type="checkbox" name="open_ports">
+         <br>
+         <input type="submit" formaction="/run-scan">
+       </form>
+
+     </div>
+{% block footer %}
+{% endblock %}
+{% endblock %}

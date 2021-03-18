@@ -18,7 +18,7 @@ chrome_options.add_argument("--ignore-certificate-errors")
 # the way selenium handles sessions
 
 def getWebScreen(url):
-    url_retry = None
+    #url_retry = None
     url_parsed = urlparse(url)
     net_loc = url_parsed.netloc
     filename = None
@@ -45,8 +45,8 @@ def getWebScreen(url):
     try:
         driver.get(url)
         print(f"{bcolors.OKGREEN}[*] Saving screenshot as: {filename}{bcolors.ENDC}")
-        screenshot = driver.save_screenshot(filename)
-    except Error as e:
+        driver.save_screenshot(filename)
+    except Exception as e:
         print(f"{bcolors.WARNING}[!] Screenshot Unavailable{bcolors.ENDC}")
         print(f"{bcolors.FAIL}[!] {e}{bcolors.ENDC}")
 

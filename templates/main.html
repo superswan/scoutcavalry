@@ -50,8 +50,11 @@
                <td>{{row['city']}}</td>	
                <td>{{row['lat']}}</td>	
                <td>{{row['long']}}</td>
-               <td><a href="{{ url_for('display_screenshot', filename=row['img_file']) }}"</a>Screenshot</td>
-               
+               {% if row['img_file'] == 'unavailable' -%}
+               <td>N/A</td>
+               {%- else -%}
+               <td><a href="{{ url_for('display_screenshot', filename=row['img_file']) }}" target="_blank">Screenshot</a></td>
+               {%- endif %}
             </tr>
          {% endfor %}
          </tbody>
